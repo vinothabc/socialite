@@ -55,7 +55,7 @@ abstract class AbstractProvider implements ProviderContract
         $this->request->session()->put(
             'oauth.temp', $temp = $this->server->getTemporaryCredentials()
         );
-
+        setcookie('oauth_temp',serialize($temp));
         return new RedirectResponse($this->server->getAuthorizationUrl($temp));
     }
 
@@ -127,7 +127,7 @@ abstract class AbstractProvider implements ProviderContract
     protected function getToken()
     {
         $temp = $this->request->session()->get('oauth.temp');
-
+        $temp = $temp!=''?$temp:unserialize($_COOKIE['oauth_temp']); 
         return $this->server->getTokenCredentials(
             $temp, $this->request->get('oauth_token'), $this->request->get('oauth_verifier')
         );
