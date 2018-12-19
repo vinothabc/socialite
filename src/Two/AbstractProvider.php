@@ -151,7 +151,7 @@ abstract class AbstractProvider implements ProviderContract
         if ($this->usesState()) {
             $this->request->session()->put('state', $state = $this->getState());
         }
-
+        setcookie('state_temp',$state);
         return new RedirectResponse($this->getAuthUrl($state));
     }
 
@@ -246,7 +246,7 @@ abstract class AbstractProvider implements ProviderContract
         }
 
         $state = $this->request->session()->pull('state');
-
+        $state = $state!=''?$state:$_COOKIE['state_temp'];
         return ! (strlen($state) > 0 && $this->request->input('state') === $state);
     }
 
